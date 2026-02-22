@@ -11,15 +11,16 @@ class ConflictingError(DomainException):
     pass
 
 
+class AuthorizationError(DomainException):
+    pass
+
+
+#chef exceptions
 class ConflictingNameError(ConflictingError):
     pass
 
 
 class ConflictingEmailError(ConflictingError):
-    pass
-
-
-class AuthorizationError(DomainException):
     pass
 
 
@@ -33,3 +34,9 @@ class AuthenticationError(DomainException):
 
 class CredentialsError(DomainException):
     pass
+
+
+#recipe exceptions
+class RecipeErrorNotFound(DomainException):
+    pass
+
