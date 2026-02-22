@@ -6,6 +6,7 @@ from src.dependencies import CurrentChef, RecipeServiceDep
 from src.models.recipe import Recipe, ResponseRecipe
 from src.rate_limiter import limiter
 
+
 app = APIRouter(tags=["recipes"], prefix="/v1/recipes")
 
 

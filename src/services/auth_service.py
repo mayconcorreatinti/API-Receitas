@@ -1,12 +1,13 @@
 import os
 from datetime import datetime, timedelta, timezone
+from http import HTTPStatus
 
 from jwt import InvalidTokenError, decode, encode
 
 from src.interfaces.repository import IChefRepository
 from src.repositories.redis_repository import RedisRepository
 from src.models.auth import FormData
-from src.exceptions.chef_exceptions import CredentialsError
+from src.exceptions import CredentialsError
 
 
 class AuthService:
@@ -29,6 +30,10 @@ class AuthService:
         return encoded_jwt
 
     async def decode_token(self, token: str) -> dict:
+        credentials_exception = CredentialsError(
+            message = "Could not validate credentials",
+            status_code = HTTPStatus.UNAUTHORIZED
+        )
         try:
             payload: dict = decode(
                 token,
@@ -37,15 +42,15 @@ class AuthService:
             )
             email = payload.get("sub")
             if email is None:
-                raise CredentialsError("Could not validate credentials")
+                raise credentials_exception
         except InvalidTokenError:
-            raise CredentialsError("Could not validate credentials")
+            raise credentials_exception
         cache = await self.redis_repository.get(f"chef:{email}")
         if cache:
             return cache
         else:
             chef = await self.chef_repository.get_by_email(email=email)
             if not chef:
-                raise CredentialsError("Could not validate credentials")
+                raise credentials_exception
             await self.redis_repository.insert(f"chef:{email}",chef)
             return chef
