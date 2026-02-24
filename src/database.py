@@ -33,7 +33,7 @@ class MysqlDBConnection(ISqlDBConnection):
         async with await self.conn.cursor(dictionary=True) as cursor:
             await cursor.execute(sql, data)
             response = await cursor.fetchall()
-            if sql.split(maxsplit=1)[0] in ["UPDATE", "INSERT"]:
+            if sql.split(maxsplit=1)[0] in ["UPDATE", "INSERT", "DELETE"]:
                 await self.conn.commit()
             return response
 
