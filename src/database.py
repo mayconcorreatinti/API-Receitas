@@ -8,15 +8,16 @@ from redis import asyncio
 
 from src.interfaces.connection_db import INoSqlDBConnection, ISqlDBConnection
 
+
 load_dotenv(override=True)
 
 
 class MysqlDBConnection(ISqlDBConnection):
     def __init__(self):
-        self._host = os.getenv("HOST")
-        self._user = os.getenv("USER")
-        self._password = os.getenv("PASSWORD")
-        self._database = os.getenv("DATABASE")
+        self._host = os.getenv("MYSQL_HOST")
+        self._user = os.getenv("MYSQL_USER")
+        self._password = os.getenv("MYSQL_PASSWORD")
+        self._database = os.getenv("MYSQL_DATABASE")
         self.conn = None
 
     async def _connection(self):
@@ -39,16 +40,24 @@ class MysqlDBConnection(ISqlDBConnection):
 
 
 class MongoDBConnection(INoSqlDBConnection):
+    print(
+        "\033[31m",
+        os.getenv("MONGO_INITDB_ROOT_USERNAME"),
+        os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
+        os.getenv("MONGO_HOST"),
+        os.getenv("PORT_MONGO"),
+        "\033[m"
+    )
     def __init__(self) -> None:
         self.__connection_string = (
             "mongodb://{}:{}@{}:{}/?authSource=admin".format(
-                os.getenv("USERNAME_MONGO"),
-                os.getenv("PASSWORD_MONGO"),
-                os.getenv("HOST"),
+                os.getenv("MONGO_INITDB_ROOT_USERNAME"),
+                os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
+                os.getenv("MONGO_HOST"),
                 os.getenv("PORT_MONGO"),
             )
         )
-        self.__database_name = os.getenv("DATABASE_MONGO")
+        self.__database_name = os.getenv("MONGO_INITDB_DATABASE")
         self.__client = None
         self.__db_connection = None
 
@@ -65,15 +74,15 @@ class MongoDBConnection(INoSqlDBConnection):
 #In-memory database used for caching.
 class RedisConnection:
     def __init__(self) -> None:
-        self.host = os.getenv("HOST")
+        self.host = os.getenv("REDIS_HOST")
         self.port = os.getenv("REDIS_PORT")
         self.db = os.getenv("REDIS_DB")
         self.__connection = None
-    
+
     def __connect(self) -> None:
         self.__connection = asyncio.from_url(
             f"redis://{self.host}:{self.port}",
-            decode_responses = True
+            decode_responses=True,
         )
 
     def get_connection(self) -> asyncio.Redis:

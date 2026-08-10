@@ -54,6 +54,7 @@ class ChefService:
     async def get_all_the_chefs(self, offset, limit):
         cache = await self.redis_repository.get(f"chefs:{offset}&{limit}")
         if cache:
+            print("vamos, porraaa.", cache)
             return cache
         chefs = await self.chef_repository.get_all(offset, limit)
         if not chefs:
