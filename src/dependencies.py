@@ -4,7 +4,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from src.database import MongoDBConnection, MysqlDBConnection, RedisConnection
-from src.interfaces.connection_db import INoSqlDBConnection, ISqlDBConnection
+from src.interfaces.connection_db import IDBConnection
 from src.interfaces.repository import IChefRepository,IRecipeRepository
 from src.repositories.chef_repository import ChefRepository
 from src.repositories.recipe_repository import RecipeRepository
@@ -14,23 +14,22 @@ from src.services.chef_service import ChefService
 from src.services.recipe_service import RecipeService
 
 
-
 def get_redis_repository() -> RedisRepository:
     return RedisRepository(
         RedisConnection()
     )
 
-def get_mysql_connection() -> ISqlDBConnection:
+def get_mysql_connection() -> IDBConnection:
     return MysqlDBConnection()
 
 
-def get_mongodb_connection() -> INoSqlDBConnection:
+def get_mongodb_connection() -> IDBConnection:
     return MongoDBConnection()
 
 
 # Chef Dependecies
 def get_chef_repository(
-    connection: ISqlDBConnection = Depends(get_mysql_connection)
+    connection: IDBConnection = Depends(get_mysql_connection)
 ) -> IChefRepository:
     return ChefRepository(connection)
 
@@ -58,7 +57,7 @@ async def get_current_chef(
 
 # Recipes Dependencies
 def get_recipe_repository(
-    connection: INoSqlDBConnection = Depends(get_mongodb_connection),
+    connection: IDBConnection = Depends(get_mongodb_connection),
 ) -> IRecipeRepository:
     return RecipeRepository(connection)
 

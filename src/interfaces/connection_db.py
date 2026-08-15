@@ -1,23 +1,19 @@
 from abc import ABC, abstractmethod
 
-from pymongo.asynchronous.database import AsyncDatabase
 
-
-class ISqlDBConnection(ABC):
+class IDBConnection(ABC):
     @abstractmethod
-    def _connection(self):
+    async def __aenter__(self):
         raise NotImplementedError
 
     @abstractmethod
-    def execute(self, sql: str, data=None):
-        raise NotImplementedError
-
-
-class INoSqlDBConnection(ABC):
-    @abstractmethod
-    def connection_to_db(self):
+    async def __aexit__(self, exc_type, exc, tb):
         raise NotImplementedError
 
     @abstractmethod
-    def get_db_connection(self) -> AsyncDatabase:
+    async def close(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def execute(self, command, data=None):
         raise NotImplementedError

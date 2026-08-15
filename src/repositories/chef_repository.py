@@ -2,14 +2,14 @@ from datetime import datetime
 from typing import List
 from uuid import uuid4
 
-from src.interfaces.connection_db import ISqlDBConnection
+from src.interfaces.connection_db import IDBConnection
 from src.interfaces.repository import IChefRepository
 from src.models.chef import Chef
 from src.utils import hash
 
 
 class ChefRepository(IChefRepository):
-    def __init__(self, connection: ISqlDBConnection) -> None:
+    def __init__(self, connection: IDBConnection) -> None:
         self.connection = connection
 
     async def get_all(self, offset: int, limit: int) -> List[Chef]:
